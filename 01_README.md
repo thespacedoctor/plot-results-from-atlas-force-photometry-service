@@ -1,6 +1,6 @@
 # Plot Results from ATLAS Force Photometry Service
 
-- [ ] move repo in Tower to the gist folder
+- [x] move repo in Tower to the gist folder
 - [ ] add code file(s) to the gist folder and push to github (via Tower)
 - [ ] complete this README file (below the line)
 - [ ] remove these tasks
