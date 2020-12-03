@@ -20,7 +20,6 @@ pip install fundamentals astrocalc
 To make the script available system wide (*OPTIONAL*):
 
 ```bash
-chmod 777 <<<>>>.py
 sudo ln -s $PWD/plot-atlas-fp.py /usr/local/bin/plot-atlas-fp
 ```
 
