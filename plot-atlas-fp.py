@@ -398,8 +398,6 @@ def read_and_simga_clip_data(
     log.debug('completed the ``read_and_simga_clip_data`` function')
     return epochs
 
-# use the tab-trigger below for new function
-# xt-def-function
 
 if __name__ == '__main__':
     main()
