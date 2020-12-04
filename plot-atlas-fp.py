@@ -220,17 +220,20 @@ def plot_lc(
         orangeMag[1][0].set_markeredgewidth('0.7')
         orangeMag[1][1].set_markeredgewidth('0.7')
         handles.append(orangeMag)
-        if max(np.array(magnitudes['o']['mags']) + np.array(magnitudes['o']['magErrs'])) > upperMag:
-            upperMag = max(
-                np.array(magnitudes['o']['mags']) + np.array(magnitudes['o']['magErrs']))
-            upperMagIndex = np.argmax((
-                magnitudes['o']['mags']) + np.array(magnitudes['o']['magErrs']))
+        errMask = np.array(magnitudes['o']['magErrs'])
+        np.putmask(errMask, errMask > 30, 30)
 
-        if min(np.array(magnitudes['o']['mags']) - np.array(magnitudes['o']['magErrs'])) < lowerMag:
+        if max(np.array(magnitudes['o']['mags']) + errMask) > upperMag:
+            upperMag = max(
+                np.array(magnitudes['o']['mags']) + errMask)
+            upperMagIndex = np.argmax((
+                magnitudes['o']['mags']) + errMask)
+
+        if min(np.array(magnitudes['o']['mags']) - errMask) < lowerMag:
             lowerMag = min(
-                np.array(magnitudes['o']['mags']) - np.array(magnitudes['o']['magErrs']))
+                np.array(magnitudes['o']['mags']) - errMask)
             lowerMagIndex = np.argmin((
-                magnitudes['o']['mags']) - np.array(magnitudes['o']['magErrs']))
+                magnitudes['o']['mags']) - errMask)
 
     if len(magnitudes['c']['mjds']):
         cyanMag = ax.errorbar(magnitudes['c']['mjds'], magnitudes['c']['mags'], yerr=magnitudes[
@@ -239,17 +242,20 @@ def plot_lc(
         cyanMag[1][0].set_markeredgewidth('0.7')
         cyanMag[1][1].set_markeredgewidth('0.7')
         handles.append(cyanMag)
-        if max(np.array(magnitudes['c']['mags']) + np.array(magnitudes['c']['magErrs'])) > upperMag:
-            upperMag = max(
-                np.array(magnitudes['c']['mags']) + np.array(magnitudes['c']['magErrs']))
-            upperMagIndex = np.argmax((
-                magnitudes['c']['mags']) + np.array(magnitudes['c']['magErrs']))
+        errMask = np.array(magnitudes['c']['magErrs'])
+        np.putmask(errMask, errMask > 30, 30)
 
-        if min(np.array(magnitudes['c']['mags']) - np.array(magnitudes['c']['magErrs'])) < lowerMag:
+        if max(np.array(magnitudes['c']['mags']) + errMask) > upperMag:
+            upperMag = max(
+                np.array(magnitudes['c']['mags']) + errMask)
+            upperMagIndex = np.argmax((
+                magnitudes['c']['mags']) + errMask)
+
+        if min(np.array(magnitudes['c']['mags']) - errMask) < lowerMag:
             lowerMag = min(
-                np.array(magnitudes['c']['mags']) - np.array(magnitudes['c']['magErrs']))
+                np.array(magnitudes['c']['mags']) - errMask)
             lowerMagIndex = np.argmin(
-                (magnitudes['c']['mags']) - np.array(magnitudes['c']['magErrs']))
+                (magnitudes['c']['mags']) - errMask)
 
     if len(magnitudes['I']['mjds']):
         cyanMag = ax.errorbar(magnitudes['I']['mjds'], magnitudes['I']['mags'], yerr=magnitudes[
@@ -258,17 +264,20 @@ def plot_lc(
         cyanMag[1][0].set_markeredgewidth('0.7')
         cyanMag[1][1].set_markeredgewidth('0.7')
         handles.append(cyanMag)
-        if max(np.array(magnitudes['I']['mags']) + np.array(magnitudes['I']['magErrs'])) > upperMag:
-            upperMag = max(
-                np.array(magnitudes['I']['mags']) + np.array(magnitudes['I']['magErrs']))
-            upperMagIndex = np.argmax((
-                magnitudes['I']['mags']) + np.array(magnitudes['I']['magErrs']))
+        errMask = np.array(magnitudes['I']['magErrs'])
+        np.putmask(errMask, errMask > 30, 30)
 
-        if min(np.array(magnitudes['I']['mags']) - np.array(magnitudes['I']['magErrs'])) < lowerMag:
+        if max(np.array(magnitudes['I']['mags']) + errMask) > upperMag:
+            upperMag = max(
+                np.array(magnitudes['I']['mags']) + errMask)
+            upperMagIndex = np.argmax((
+                magnitudes['I']['mags']) + errMask)
+
+        if min(np.array(magnitudes['I']['mags']) - errMask) < lowerMag:
             lowerMag = min(
-                np.array(magnitudes['I']['mags']) - np.array(magnitudes['I']['magErrs']))
+                np.array(magnitudes['I']['mags']) - errMask)
             lowerMagIndex = np.argmin(
-                (magnitudes['I']['mags']) - np.array(magnitudes['I']['magErrs']))
+                (magnitudes['I']['mags']) - errMask)
 
     plt.legend(handles=handles, prop={
                'size': 13.5}, bbox_to_anchor=(0.95, 1.2), loc=0, borderaxespad=0., ncol=4, scatterpoints=1)
@@ -277,6 +286,7 @@ def plot_lc(
     allMjd = magnitudes['o']['mjds'] + magnitudes['c']['mjds']
     xmin = min(allMjd) - 5.
     xmax = max(allMjd) + 5.
+    mjdRange = xmax - xmin
     ax.set_xlim([xmin, xmax])
 
     ax.set_ylim([0. - deltaMag, upperMag + deltaMag])
@@ -286,7 +296,6 @@ def plot_lc(
     # PLOT THE MAGNITUDE SCALE
     axisUpperFlux = upperMag
     axisLowerFlux = 1e-29
-
     axisLowerMag = -2.5 * math.log10(axisLowerFlux) + 23.9
     axisUpperMag = -2.5 * math.log10(axisUpperFlux) + 23.9
 
@@ -295,7 +304,7 @@ def plot_lc(
 
     magLabels = [20., 19.5, 19.0, 18.5,
                  18.0, 17.5, 17.0, 16.5, 16.0, 15.5, 15.0]
-    magFluxes = [pow(10, old_div(-(m + 48.6), 2.5)) * 1e29 for m in magLabels]
+    magFluxes = [pow(10, old_div(-(m - 23.9), 2.5)) for m in magLabels]
 
     ax.yaxis.set_major_locator(ticker.FixedLocator((magFluxes)))
     ax.yaxis.set_major_formatter(ticker.FixedFormatter((magLabels)))
@@ -317,7 +326,10 @@ def plot_lc(
     ax.xaxis.grid(False)
     plt.setp(ax3.xaxis.get_majorticklabels(),
              rotation=45, horizontalalignment='left')
-    ax3.xaxis.set_major_formatter(dates.DateFormatter('%b %d'))
+    if mjdRange > 365:
+        ax3.xaxis.set_major_formatter(dates.DateFormatter('%b %d %y'))
+    else:
+        ax3.xaxis.set_major_formatter(dates.DateFormatter('%b %d'))
 
     ax2.set_ylabel('Flux ($\mu$Jy)', rotation=-90.,  labelpad=27)
 

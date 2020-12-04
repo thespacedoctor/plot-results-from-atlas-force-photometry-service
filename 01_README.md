@@ -47,7 +47,8 @@ The plot can be found at `atlas_fp_lightcurve_20201203t155951.pdf`
 
 This produces the following plot:
 
-[![](https://live.staticflickr.com/65535/50676025996_8995a4345d_z.png)](https://live.staticflickr.com/65535/50676025996_8995a4345d_o.png)
+[![](https://live.staticflickr.com/65535/50678883576_877c64e820_z.png)](https://live.staticflickr.com/65535/50678883576_877c64e820_o.png)
+
 
 To stack the intra-night data and give the plot and file the name of the source you're plotting:
 
@@ -58,4 +59,5 @@ The plot can be found at `ATLAS20bdvs_atlas_fp_lightcurve_20201203t160321.pdf`
 
 And here is the stacked-photometry plot produced:
 
-[![](https://live.staticflickr.com/65535/50676033766_361b8c1f59_z.png)](https://live.staticflickr.com/65535/50676033766_361b8c1f59_o.png)
+[![](https://live.staticflickr.com/65535/50678884596_a0c7e09daf_z.png)](https://live.staticflickr.com/65535/50678884596_a0c7e09daf_o.png)
+
