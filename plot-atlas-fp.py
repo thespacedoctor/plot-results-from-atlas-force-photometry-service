@@ -11,10 +11,13 @@
 
 Usage:
     plot-atlas-fp <fpFile> [--stacked <objectName>]
+    plot-atlas-fp <fpFile> <mjdMin> <mjdMax> [--stacked <objectName>]
 
 Options:
     fpFile                path to the results file returned by the ATLAS FP service
     objectName            give a name for the object you are plotting (for plot title and filename)
+    mjdMin                min mjd to plot
+    mjdMax                max mjd to plot
     -h, --help            show this help message
     -s, --stacked         stack photometry from the smae night (and same filter)
 """
@@ -70,8 +73,11 @@ def main(arguments=None):
     fpFile = a["fpFile"]
     objectName = a["objectName"]
     stacked = a["stackedFlag"]
+    mjdMin = a["mjdMin"]
+    mjdMax = a["mjdMax"]
 
-    epochs = read_and_simga_clip_data(log=log, fpFile=fpFile)
+    epochs = read_and_simga_clip_data(
+        log=log, fpFile=fpFile, mjdMin=mjdMin, mjdMax=mjdMax)
 
     plotFilePath = plot_lc(log=log, epochs=epochs,
                            objectName=objectName, stacked=stacked)
@@ -355,6 +361,8 @@ def plot_lc(
 def read_and_simga_clip_data(
         log,
         fpFile,
+        mjdMin,
+        mjdMax,
         clippingSigma=3):
     """*summary of function*
 
@@ -362,6 +370,8 @@ def read_and_simga_clip_data(
 
     - `log` -- logger
     - `fpFile` -- path to force photometry file
+    - `mjdMin` -- min mjd to plot. Default **False**
+    - `mjdMax` -- max mjd to plot. Default **False**
     - `clippingSigma` -- the level at which to clip flux data
 
     **Return:**
@@ -369,6 +379,11 @@ def read_and_simga_clip_data(
     - `epochs` -- sigma clipped and cleaned epoch data
     """
     log.debug('starting the ``read_and_simga_clip_data`` function')
+
+    if mjdMin:
+        mjdMin = float(mjdMin)
+    if mjdMax:
+        mjdMax = float(mjdMax)
 
     # CLEAN UP FILE FOR EASIER READING
 
@@ -386,7 +401,12 @@ def read_and_simga_clip_data(
                 row[k] = float(v)
             except:
                 pass
-        epochs.append(row)
+        if mjdMin and mjdMax:
+
+            if row["MJD"] > mjdMin and row["MJD"] < mjdMax:
+                epochs.append(row)
+        else:
+            epochs.append(row)
 
     clipped = 1000
     while clipped > 0:
@@ -394,14 +414,15 @@ def read_and_simga_clip_data(
         # WORK OUT STD FOR CLIPPING ROGUE DATA
         fluxes = []
         for e in epochs:
-            if e["uJy"] > 49.:
+            if e["uJy"] > 50.:
                 fluxes.append(e["uJy"])
         std = np.std(fluxes)
         mean = np.mean(fluxes)
+
         keepEpochs = []
         for epoch in epochs:
             # CLIP SOME ROUGE DATA-POINTS
-            if not epoch["uJy"] or epoch["uJy"] < 50. or abs(epoch["uJy"] - mean) > clippingSigma * std:
+            if not epoch["uJy"] or epoch["uJy"] < 0. or (abs(epoch["uJy"] - mean) > clippingSigma * std and e["uJy"] > 50.):
                 clipped += 1
                 continue
             keepEpochs.append(epoch)

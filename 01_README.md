@@ -29,13 +29,16 @@ sudo ln -s $PWD/plot-atlas-fp.py /usr/local/bin/plot-atlas-fp
 
 ```bash
 Usage:
-    plot-atlas-fp <fpFile> [-s <objectName>]
+    plot-atlas-fp <fpFile> [--stacked <objectName>]
+    plot-atlas-fp <fpFile> <mjdMin> <mjdMax> [--stacked <objectName>]
 
 Options:
     fpFile                path to the results file returned by the ATLAS FP service
     objectName            give a name for the object you are plotting (for plot title and filename)
+    mjdMin                min mjd to plot
+    mjdMax                max mjd to plot
     -h, --help            show this help message
-    -s, --stacked         stack photometry from the smae night (and same filter)
+    -s, --stacked         stack photometry from the same night (and same filter)
 ```
 
 To plot the non-stacked data:
@@ -60,4 +63,15 @@ The plot can be found at `ATLAS20bdvs_atlas_fp_lightcurve_20201203t160321.pdf`
 And here is the stacked-photometry plot produced:
 
 [![](https://live.staticflickr.com/65535/50678884596_a0c7e09daf_z.png)](https://live.staticflickr.com/65535/50678884596_a0c7e09daf_o.png)
+
+To limit the data displayed in the plot use the `mjdMin` and `mjdMax` options:
+
+```bash
+> plot-atlas-fp.py job01088.txt 59130 59200 -s ATLAS20bdvs
+The plot can be found at `ATLAS20bdvs_atlas_fp_lightcurve_20201203t160321.pdf`
+```
+
+[![](https://live.staticflickr.com/65535/50679019496_13e89a77fb_z.png)](https://live.staticflickr.com/65535/50679019496_13e89a77fb_o.png)
+
+
 
