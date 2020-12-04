@@ -139,26 +139,38 @@ def plot_lc(
 
     # STACK OR NON-STACKED?
     if stacked:
-        for fil, d in list(magnitudes.items()):
+        # magnitudes/fluxes are divided in unique filter sets - so iterate over
+        # filters
+        for fil, data in list(magnitudes.items()):
+            # we're going to create further subsets for each unqiue mjd (floored to an integer)
+            # mag variable == flux (just to confuse you)
             distinctMjds = {}
-            for m, f, e in zip(d["mjds"], d["mags"], d["magErrs"]):
-                key = str(int(math.floor(m)))
+            for mjd, flx, err in zip(data["mjds"], data["mags"], data["magErrs"]):
+                # dict key is the unique integer mjd
+                key = str(int(math.floor(mjd)))
+                # first data point of the nights? create new data set
                 if key not in distinctMjds:
                     distinctMjds[key] = {
-                        "mjds": [m],
-                        "mags": [f],
-                        "magErrs": [e]
+                        "mjds": [mjd],
+                        "mags": [flx],
+                        "magErrs": [err]
                     }
+                # or not the first? append to already created list
                 else:
                     distinctMjds[key]["mjds"].append(m)
                     distinctMjds[key]["mags"].append(f)
                     distinctMjds[key]["magErrs"].append(e)
 
+            # all data now in mjd subsets. So for each subset (i.e. individual
+            # nights) ...
             for k, v in list(distinctMjds.items()):
+                # give me the mean mjd
                 summedMagnitudes[fil]["mjds"].append(
                     old_div(sum(v["mjds"]), len(v["mjds"])))
+                # give me the mean flux
                 summedMagnitudes[fil]["mags"].append(
                     old_div(sum(v["mags"]), len(v["mags"])))
+                # give me the combined error
                 summedMagnitudes[fil]["magErrs"].append(sum(v["magErrs"]) / len(v["magErrs"]
                                                                                 ) / math.sqrt(len(v["magErrs"])))
         magnitudes = summedMagnitudes
