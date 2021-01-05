@@ -104,7 +104,6 @@ def main(arguments=None):
             if os.path.isfile(filepath) and os.path.splitext(filepath)[1] == ".txt":
                 resultFilePaths.append(filepath)
 
-    # resultFilePaths = resultFilePaths[:100]
     log.info("""starting plotter""")
     myplotter = plotter(
         log=log, resultFilePaths=resultFilePaths, outputDirectory=outputDirectory, mjdMin=mjdMin, mjdMax=mjdMax, stackBinSize=binDays, objectName=objectName, plotType="pdf")
@@ -125,6 +124,7 @@ class plotter():
         - `log` -- logger
         - `resultFilePaths` -- a list of result filepaths
         - `outputDirectory` -- path to the directory to output the plots to. Default is *False* (CWD).
+        - `outputPlotPaths` -- a list of plot file paths. Default is *False*. If set this overrides the `outputDirectory`. Must be same length as `resultFilePaths`
         - `mjdMin` -- min mjd to plot. Default **False**
         - `mjdMax` -- max mjd to plot. Default **False**
         - `stackBinSize` -- stack photometry (in same filter) in time-range bin of this size (days) Default **False** (don't stack)
@@ -138,7 +138,7 @@ class plotter():
     myplotter = plotter(
         log=log, 
         resultFilePaths=resultFilePaths, 
-        outputDirectory=outputDirectory, 
+        outputPlotPaths=['/path/to/plot1.pdf','/path/to/plot2.pdf'...], 
         mjdMin=mjdMin, 
         mjdMax=mjdMax, 
         stackBinSize=binDays, 
@@ -154,6 +154,7 @@ class plotter():
             log,
             resultFilePaths=[],
             outputDirectory=False,
+            outputPlotPaths=False,
             mjdMin=False,
             mjdMax=False,
             stackBinSize=False,
@@ -167,6 +168,7 @@ class plotter():
         self.stackBinSize = stackBinSize
         self.objectName = objectName
         self.plotType = plotType
+        self.outputPlotPaths = outputPlotPaths
 
         if plotType not in ("pdf", "png", "jpg"):
             self.log.error('plotType must be png, pdf or jpg')
@@ -181,7 +183,7 @@ class plotter():
         self.outputDirectory = outputDirectory
 
         # TEST OUT FOLDER EXISTS - CREATE IF NOT
-        if not os.path.exists(outputDirectory):
+        if not os.path.exists(outputDirectory) and outputPlotPaths is False:
             os.makedirs(outputDirectory)
 
         # CLEAR OBJECT NAME IF MORE THAN ONE RESULT FILE
@@ -193,6 +195,13 @@ class plotter():
             self.mjdMin = float(mjdMin)
         if mjdMax:
             self.mjdMax = float(mjdMax)
+
+        # CHECK outputPlotPaths AND resultFilePaths SAME LENGTH
+        if outputPlotPaths != False and len(outputPlotPaths) != len(resultFilePaths):
+            log.error(
+                'outputPlotPaths and resultFilePaths are not the same length' % locals())
+            raise AssertionError(
+                'outputPlotPaths and resultFilePaths are not the same length')
 
         self.firstPlot = True
 
@@ -259,6 +268,12 @@ class plotter():
         converter = conversions(
             log=self.log
         )
+
+        # CREATE A LOOKUP DICT FOR OUTPUT PATHS
+        if self.outputPlotPaths:
+            self.outputLookupDict = {}
+            for r, o in zip(self.resultFilePaths, self.outputPlotPaths):
+                self.outputLookupDict[r] = o
 
         self.log.info("""starting multiprocessing""")
         plotPaths = fmultiprocess(log=self.log, function=self.plot_single_result,
@@ -530,7 +545,10 @@ class plotter():
             stacked = "_stacked"
         else:
             stacked = ""
-        filePath = f"{self.outputDirectory}{objectName}atlas_fp_lightcurve{stacked}.{self.plotType}"
+        if self.outputPlotPaths:
+            filePath = self.outputLookupDict[fpFile]
+        else:
+            filePath = f"{self.outputDirectory}{objectName}atlas_fp_lightcurve{stacked}.{self.plotType}"
         plt.savefig(filePath, bbox_inches='tight', transparent=False,
                     pad_inches=0.1, optimize=True, progressive=True)
 
