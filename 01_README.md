@@ -12,11 +12,9 @@ The script will perform sigma-clipping of the data for you to remove rogue data 
 git clone https://gist.github.com/86777fa5a9567b7939e8d84fd8cf6a76.git atlas-fp
 cd atlas-fp
 chmod 777 plot_atlas_fp.py 
-conda config --add channels conda-forge
-conda config --set channel_priority strict
-conda create -n atlas-fp python=3.7 pip numpy matplotlib multiprocess astropy unicodecsv
+conda create -n atlas-fp python=3.7 pip numpy matplotlib astropy unicodecsv
 conda activate atlas-fp
-pip install fundamentals astrocalc
+pip install fundamentals astrocalc multiprocess
 ```
 
 To make the script available system wide (*OPTIONAL*):

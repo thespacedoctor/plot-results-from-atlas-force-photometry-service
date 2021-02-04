@@ -276,10 +276,16 @@ class plotter():
             for r, o in zip(self.resultFilePaths, self.outputPlotPaths):
                 self.outputLookupDict[r] = o
 
-        self.log.info("""starting multiprocessing""")
-        plotPaths = fmultiprocess(log=self.log, function=self.plot_single_result,
-                                  inputArray=self.resultFilePaths, poolSize=False, timeout=7200, fig=fig, converter=converter, ax=ax)
-        self.log.info("""finished multiprocessing""")
+        if len(self.resultFilePaths) == 1:
+            plotPaths = []
+            for rf in self.resultFilePaths:
+                plotPaths.append(self.plot_single_result(
+                    fpFile=rf, fig=fig, converter=converter, ax=ax))
+        else:
+            self.log.info("""starting multiprocessing""")
+            plotPaths = fmultiprocess(log=self.log, function=self.plot_single_result,
+                                      inputArray=self.resultFilePaths, poolSize=False, timeout=7200, fig=fig, converter=converter, ax=ax)
+            self.log.info("""finished multiprocessing""")
 
         self.log.info('completed the ``plot`` method')
         return plotPaths
