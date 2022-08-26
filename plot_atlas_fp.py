@@ -29,6 +29,22 @@ Options:
     -h, --help              show this help message
 """
 ################# GLOBAL IMPORTS ####################
+import matplotlib.ticker as ticker
+from fundamentals.renderer import list_of_dictionaries
+from fundamentals.stats import rolling_window_sigma_clip
+from operator import itemgetter
+from astropy.stats import sigma_clip, mad_std
+from os.path import expanduser
+from astrocalc.times import conversions
+from fundamentals import fmultiprocess
+import matplotlib.ticker as mtick
+from fundamentals.download import get_now_datetime_filestamp
+import codecs
+from past.utils import old_div
+import numpy as np
+from matplotlib import dates
+import matplotlib.pyplot as plt
+import matplotlib as mpl
 import sys
 import os
 from fundamentals import tools
@@ -38,22 +54,6 @@ import math
 # SUPPRESS MATPLOTLIB WARNINGS
 import warnings
 warnings.filterwarnings("ignore")
-import matplotlib as mpl
-import matplotlib.pyplot as plt
-from matplotlib import dates
-import numpy as np
-from past.utils import old_div
-import codecs
-from fundamentals.download import get_now_datetime_filestamp
-import matplotlib.ticker as mtick
-from fundamentals import fmultiprocess
-from astrocalc.times import conversions
-from os.path import expanduser
-from astropy.stats import sigma_clip, mad_std
-from operator import itemgetter
-from fundamentals.stats import rolling_window_sigma_clip
-from fundamentals.renderer import list_of_dictionaries
-import matplotlib.ticker as ticker
 mpl.use('svg')
 
 
@@ -256,7 +256,7 @@ class plotter():
         # ADD SECOND Y-AXIS
         ax2 = ax.twinx()
         ax2.yaxis.set_major_formatter(y_formatter)
-        ax2.set_ylabel('Flux ($\mu$Jy)', rotation=-90.,  labelpad=27)
+        ax2.set_ylabel('Flux ($\mu$Jy)', rotation=-90., labelpad=27)
         ax2.grid(False)
 
         # ADD SECOND X-AXIS
@@ -293,7 +293,7 @@ class plotter():
     def read_and_sigma_clip_data(
             self,
             fpFile,
-            clippingSigma=2.2):
+            clippingSigma=3.0):
         """*clean up rouge data from the files by performing some basic clipping*
 
         **Key Arguments:**
@@ -446,7 +446,7 @@ class plotter():
 
         if len(magnitudes['o']['mjds']):
             orangeMag = ax.errorbar(magnitudes['o']['mjds'], magnitudes['o']['mags'], yerr=magnitudes[
-                'o']['magErrs'], color='#FFA500', fmt='o', mfc='#FFA500', mec='#FFA500', zorder=1, ms=12., alpha=0.8, linewidth=1.2,  label='o-band mag ', capsize=10)
+                'o']['magErrs'], color='#FFA500', fmt='o', mfc='#FFA500', mec='#FFA500', zorder=1, ms=12., alpha=0.8, linewidth=1.2, label='o-band mag ', capsize=10)
 
             # ERROBAR CAP THICKNESS
             orangeMag[1][0].set_markeredgewidth('0.7')
@@ -718,6 +718,7 @@ def get_twin_axis(ax, axis):
                 if sibling.bbox.bounds == ax.bbox.bounds and sibling is not ax:
                     return sibling
     return None
+
 
 if __name__ == '__main__':
     main()
