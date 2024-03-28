@@ -1,4 +1,4 @@
-# Plot Results from ATLAS Force Photometry Service
+# Plot Results from ATLAS Forced Photometry Service
 
 The [gist containing this content and be found here](https://gist.github.com/86777fa5a9567b7939e8d84fd8cf6a76).
 
