@@ -1,7 +1,5 @@
 # Plot Results from ATLAS Forced Photometry Service
 
-The [gist containing this content and be found here](https://gist.github.com/86777fa5a9567b7939e8d84fd8cf6a76).
-
 Use this script to plot the output returned from the [ATLAS forced photometry service](https://fallingstar-data.com/forcedphot/). You will find an example output file here for testing purposes (`job01088.txt`); this is forced photometry generated at the location of object `ATLAS20bdvs` == `AT2020wol` (RA=29.86137, DEC=+30.72675).
 
 The script will perform sigma-clipping of the data for you to remove rogue data points. You can also optionally 'stack' single-filter photometry across epochs.
@@ -9,7 +7,7 @@ The script will perform sigma-clipping of the data for you to remove rogue data 
 ## Installation
 
 ```bash
-git clone https://gist.github.com/86777fa5a9567b7939e8d84fd8cf6a76.git atlas-fp
+git clone https://github.com/thespacedoctor/plot-results-from-atlas-force-photometry-service.git atlas-fp
 cd atlas-fp
 chmod 777 plot_atlas_fp.py 
 conda create -n atlas-fp python=3.7 pip numpy matplotlib astropy unicodecsv
