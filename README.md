@@ -1,5 +1,7 @@
 # Plot Results from ATLAS Forced Photometry Service
 
+[![](https://zenodo.org/badge/DOI/10.5281/zenodo.10978968.svg)](https://zenodo.org/doi/10.5281/zenodo.10978968) 
+
 Use this script to plot the output returned from the [ATLAS forced photometry service](https://fallingstar-data.com/forcedphot/). You will find an example output file here for testing purposes (`job01088.txt`); this is forced photometry generated at the location of object `ATLAS20bdvs` == `AT2020wol` (RA=29.86137, DEC=+30.72675).
 
 The script will perform sigma-clipping of the data for you to remove rogue data points. You can also optionally 'stack' single-filter photometry across epochs.
@@ -134,3 +136,18 @@ plot_atlas_fp.py stack 1 /path/to/atlas_force_phot_result_set --o=~/Desktop/stac
 ```
 
 This will be a lot quicker than plotting the result files individually.
+
+## How to cite this software
+
+If you use this code in your work, please cite using the following BibTeX entry: 
+
+```bibtex
+@software{Young_plot_atlas_fp,
+    author = {Young, David R.},
+    doi = {10.5281/zenodo.10978968},
+    license = {GPL-3.0-only},
+    title = {{plot_atlas_fp.py}},
+    url = {https://zenodo.org/doi/10.5281/zenodo.10978968},
+    year = {2020}
+}
+```
