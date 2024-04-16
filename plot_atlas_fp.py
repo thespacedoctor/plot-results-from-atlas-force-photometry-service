@@ -633,8 +633,8 @@ class plotter():
                 meanFLux = old_div(sum(v["mags"]), len(v["mags"]))
                 summedMagnitudes[fil]["mags"].append(meanFLux)
                 # GIVE ME THE COMBINED ERROR
-                combError = sum(v["magErrs"]) / len(v["magErrs"]
-                                                    ) / math.sqrt(len(v["magErrs"]))
+                sum_of_squares = sum(x**2 for x in v["magErrs"])
+                combError = math.sqrt(sum_of_squares) / len(v["magErrs"])
                 summedMagnitudes[fil]["magErrs"].append(combError)
                 # GIVE ME NUMBER OF DATA POINTS COMBINED
                 n = len(v["mjds"])
