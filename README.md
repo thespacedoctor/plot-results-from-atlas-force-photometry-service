@@ -17,6 +17,13 @@ conda activate atlas-fp
 pip install fundamentals astrocalc multiprocess
 ```
 
+To run the tests, install the development dependencies as well:
+
+```bash
+pip install -r requirements-dev.txt
+python -m pytest tests/
+```
+
 To make the script available system wide (*OPTIONAL*):
 
 ```bash
@@ -28,6 +35,23 @@ sudo ln -s $PWD/plot_atlas_fp.py /usr/local/bin/plot_atlas_fp
 ## A Note on Data Cleaning
 
 The script uses a rolling-window to identify and clip rogue data-points from the photometry results file. For each and every data point in a given filter a median flux and median-absolute-distribution (MAD) value is calculated for a fixed number of neighbouring points either side of the data-point. If the data-point is found beyond a threshold number of MAD values from the median then it is clipped from the dataset and not included in the lightcurve plots or stacked photometry sets.
+
+## Filters
+
+The script reads the filter from the `F` column of the results file and plots each filter in its own colour:
+
+| Filter | Description   | Plot colour |
+| ------ | ------------- | ----------- |
+| `c`    | cyan          | `#2aa198`   |
+| `o`    | orange        | `#FFA500`   |
+| `w`    | wide          | `#007bff`   |
+| `I`    | near-infrared | `#dc322f`   |
+
+Filters are listed in wavelength order, which is also the order they appear in the plot legend. Any filter not in this table is ignored when the results file is read.
+
+Each filter is sigma-clipped and stacked independently: data points in one filter never affect the clipping or stacking of another. If a results file contains no data for a filter, that filter is left out of the plot and its legend.
+
+To add support for a new filter, add an entry to the `FILTERS` constant at the top of `plot_atlas_fp.py`. The reader, the clipper, the stacker and the plot all derive their behaviour from it.
 
 ## Usage
 
