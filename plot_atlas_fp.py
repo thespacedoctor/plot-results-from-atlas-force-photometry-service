@@ -436,8 +436,6 @@ class plotter():
         if len(mjdList) == 0:
             self.log.error(f'{fpFile} does not contain enough data')
             return None
-        lowerDetectionMjd = min(mjdList)
-        upperDetectionMjd = max(mjdList)
 
         # DETERMIN MAGNITUDE RANGE
         allMags = magnitudes['o']['mags'] + magnitudes['c']['mags']
