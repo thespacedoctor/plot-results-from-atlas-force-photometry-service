@@ -117,6 +117,14 @@ def main(arguments=None):
     return
 
 
+# FIGURE-FRACTION Y-COORDINATES FOR THE OBJECT-NAME TITLE AND THE LEGEND ABOVE THE AXES.
+# THE TITLE SITS `TITLE_LEGEND_GAP` ABOVE THE LEGEND SO THE TWO NEVER OVERLAP, WHATEVER THE
+# LEGEND'S WIDTH (I.E. HOWEVER MANY FILTERS ARE PLOTTED).
+LEGEND_Y_FIGCOORD = 1.08
+TITLE_LEGEND_GAP = 0.10
+TITLE_Y_FIGCOORD = LEGEND_Y_FIGCOORD + TITLE_LEGEND_GAP
+
+
 class plotter():
     """
     Plotter object used to plot results returned from the ATLAS Forced Photometry service
@@ -419,9 +427,10 @@ class plotter():
             magnitudes = self.stack_photometry(
                 magnitudes, binningDays=self.stackBinSize, fpFile=fpFile)
 
-        # ATLAS OBJECT NAME LABEL AS TITLE
+        # ATLAS OBJECT NAME LABEL AS TITLE (ANCHORED BY ITS BOTTOM EDGE, ABOVE THE LEGEND)
         if objectName and len(objectName):
-            fig.text(0.1, 1.02, objectName, ha="left", fontsize=40)
+            fig.text(0.1, TITLE_Y_FIGCOORD, objectName,
+                     ha="left", va="bottom", fontsize=40)
 
         # ADD MAGNITUDES AND LIMITS FOR EACH FILTER
         handles = []
@@ -488,8 +497,15 @@ class plotter():
                     (magnitudes['c']['mags']) - errMask)
 
         if self.firstPlot:
+            # `LOC='LOWER RIGHT'` HERE ONLY PICKS WHICH CORNER OF THE LEGEND BOX ALIGNS TO
+            # `BBOX_TO_ANCHOR` (IT DOES NOT SEARCH FOR FREE SPACE, UNLIKE `LOC=0`/"BEST", WHICH
+            # IS ILL-DEFINED ONCE AN EXPLICIT ANCHOR IS GIVEN AND WAS THE CAUSE OF THE LEGEND
+            # DRIFTING INTO THE TITLE ABOVE). ANCHORING IN FIGURE COORDINATES KEEPS THE LEGEND'S
+            # POSITION INDEPENDENT OF THE NUMBER OF FILTERS PLOTTED.
             plt.legend(handles=handles, prop={
-                'size': 13.5}, bbox_to_anchor=(0.95, 1.2), loc=0, borderaxespad=0., ncol=4, scatterpoints=1)
+                'size': 13.5}, bbox_to_anchor=(0.95, LEGEND_Y_FIGCOORD), bbox_transform=fig.transFigure,
+                # SMALL PADDING SO THE LEGEND DOESN'T VISUALLY TOUCH ITS ANCHOR CORNER
+                loc='lower right', borderaxespad=0.3, ncol=4, scatterpoints=1)
 
         # SET THE TEMPORAL X-RANGE
         allMjd = magnitudes['o']['mjds'] + magnitudes['c']['mjds']
